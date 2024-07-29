@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./images/favicon-32x32.png"
+    />
+
+    <title>Frontend Mentor | Rock, Paper, Scissors</title>
+
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- modal -->
+    <div class="moadal-wrapper modal-closed">
+      <div id="modal-content" class="rules-moadal">
+        <div>
+          <h1>Rules</h1>
+          <button id="close-rules-modal-btn">
+            <img src="./images/icon-close.svg" alt="colse icon" />
+          </button>
+        </div>
+        <img src="./images/image-rules.svg" alt="" />
+      </div>
+    </div>
+    <!-- modal -->
+
+    <div class="container main-wrapper">
+      <main>
+        <!-- header -->
+        <header>
+          <h2 class="game-actions"></h2>
+          <div class="score">
+            <p>Score</p>
+            <span id="score-counter"></span>
+          </div>
+        </header>
+        <!-- header -->
+
+        <!-- Game -->
+        <section class="game"></section>
+        <!-- Game -->
+      </main>
+
+      <!-- footer -->
+      <footer class="container">
+        <button id="rules-btn">Rules</button>
+      </footer>
+      <!-- footer -->
+    </div>
+    <script src="./index.js"></script>
+  </body>
+</html>
