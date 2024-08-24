@@ -60,7 +60,7 @@ body {
   background-image: var(--main-bg);
 }
 
-.moadal-wrapper {
+.modal-wrapper {
   position: fixed;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.4);
@@ -72,7 +72,7 @@ body {
   visibility: hidden;
   opacity: 0;
 
-  .rules-moadal {
+  .rules-modal {
     background-color: var(--elements-bg);
     padding: 1.6rem 2rem;
     border-radius: 0.6em;
@@ -101,8 +101,25 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100svh;
-  padding-block: 3rem;
-  overflow: clip;
+  padding-block: 1.5rem 3rem;
+  overflow: hidden;
+}
+
+.main-wrapper .switch-game-behavior-btn {
+  width: fit-content;
+  padding: 8px 14px;
+  margin: 0 auto;
+  background-color: hsl(230, 89%, 65%);
+  color: white;
+  border-radius: 3px;
+  border: 1px solid #eee;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+
+  &:hover {
+    background-color: #4865f4;
+    filter: none;
+  }
 }
 
 main {
@@ -110,7 +127,7 @@ main {
   justify-content: space-between;
   flex-direction: column;
   flex-grow: 1;
-  gap: 2rem;
+  gap: 1rem;
   width: clamp(280px, 600px, 100%);
   margin-inline: auto;
 
@@ -118,7 +135,7 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
     padding: 1rem;
     width: 100%;
     border: 3px solid var(--Header-Outline);
@@ -132,8 +149,8 @@ main {
       justify-content: center;
       font-weight: var(--semibold);
       color: var(--elements-bg);
-      font-size: 2.7rem;
-      line-height: 0.8;
+      font-size: 2rem;
+      line-height: 0.9;
     }
 
     .score {
@@ -170,17 +187,19 @@ main {
 
     .game-options {
       position: relative;
-      width: clamp(250px, 300px, 100%);
-      height: 280px;
-      background: url("./images/bg-triangle.svg") center center / 100% 100%
-        no-repeat;
+      width: clamp(250px, 360px, 100%);
+      min-height: 320px;
+      background-image: url("./images/bg-triangle.svg");
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
       margin-block: 4rem 2rem;
     }
   }
 }
 
 .option {
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
   position: absolute;
@@ -191,10 +210,13 @@ main {
   img {
     box-shadow: 0 7px 0 3px #00000018 inset;
     border-radius: 50%;
-    padding: 2rem;
+    padding: 1.8rem;
     background-color: var(--elements-bg);
     transition: all 0.2s;
     pointer-events: none;
+    width: clamp(60px, 100px, 120px);
+    aspect-ratio: 1;
+    
 
     &:hover {
       filter: drop-shadow(0 0 5px #00000063);
@@ -229,6 +251,12 @@ main {
     background-image: var(--Rock-Gradient);
   }
 }
+.game-options.advanced .option[data-option="rock"] {
+  bottom: 0;
+  left: initial;
+  right: 0;
+  transform: translate(0, 25%);
+}
 
 .option[data-option="paper"] {
   top: 0;
@@ -240,6 +268,13 @@ main {
   }
 }
 
+.game-options.advanced .option[data-option="paper"] {
+  top: 0;
+  left: initial;
+  right: 0;
+  transform: translate(25%, 50%);
+}
+
 .option[data-option="scissors"] {
   top: 0;
   right: 0;
@@ -247,6 +282,33 @@ main {
 
   &::before {
     background-image: var(--Scissors-Gradient);
+  }
+}
+
+.game-options.advanced .option[data-option="scissors"] {
+  top: 0;
+  left: 50%;
+  right: initial;
+  transform: translate(-50%, -50%);
+}
+
+.option[data-option="spock"] {
+  top: 0;
+  left: 0;
+  transform: translate(-25%, 50%);
+
+  &::before {
+    background-image: var(--Cyan-Gradient);
+  }
+}
+
+.option[data-option="lizard"] {
+  bottom: 0;
+  left: 0;
+  transform: translate(0, 25%);
+
+  &::before {
+    background-image: var(--Lizard-Gradient);
   }
 }
 
@@ -285,7 +347,7 @@ main {
   justify-content: space-between;
   align-items: center;
 
-  .option.selelcted {
+  .option.selected {
     top: initial;
     left: initial;
     right: inherit;
@@ -311,11 +373,11 @@ main {
 
 .who-is-winner-wrapper {
   position: fixed;
-  background-color: #1e1e1e1f;
+  background-color: #1e1e1e41;
   backdrop-filter: blur(0.75px);
   inset: 0;
-  translate: 110% -120%;
-  transition: all 0.5s ;
+  translate: 0 -120%;
+  transition: all 0.2s;
   display: grid;
   place-items: center;
   z-index: 120;
@@ -347,7 +409,7 @@ main {
 }
 
 .show-who-is-winner-wrapper {
-  translate: 0% 0%;
+  translate: 0 0;
 }
 
 .winner-shape {
@@ -407,13 +469,15 @@ footer {
   }
 
   main section.game .game-options {
-    height: 200px;
-    max-width: 100%;
+    min-height: initial;
+    height: 260px;
+    width: clamp(200px,320px,100%);
     margin-block-end: 5rem;
   }
 
   .option {
     img {
+      width: clamp(60px, 80px, 100px);
       padding: 1.2rem;
     }
 
@@ -424,6 +488,14 @@ footer {
 
   footer #rules-btn {
     margin-inline: auto;
+  }
+}
+
+@media (width < 400px) {
+  main header {
+    .game-actions {
+      font-size: 1.5rem;
+    }
   }
 }
 

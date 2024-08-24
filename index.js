@@ -1,23 +1,58 @@
 "use strict";
 
-// game settinges
-const OriginalgameActions = [
+// game settings
+let gameActions = [];
+const originalGameActions = [
   { name: "rock", img: "icon-rock.svg" },
   { name: "paper", img: "icon-paper.svg" },
   { name: "scissors", img: "icon-scissors.svg" },
 ];
+
+const additionGameActions = [
+  { name: "lizard", img: "icon-lizard.svg" },
+  { name: "spock", img: "icon-spock.svg" },
+];
+
+const rules = {
+  regular: "./images/image-rules.svg",
+  advanced: "./images/image-rules-bonus.svg",
+};
+
 let score = localStorage.getItem("game-score") || 0;
 
 // DOM elements
-const modal = document.querySelector(".moadal-wrapper");
+const modal = document.querySelector(".modal-wrapper");
 const closeRulesModalBtn = document.getElementById("close-rules-modal-btn");
 const rulesBtn = document.getElementById("rules-btn");
+const rulesImg = document.getElementById("rules-img");
 const modalContent = document.getElementById("modal-content");
 const scoreCounter = document.getElementById("score-counter");
 const gameWrapper = document.querySelector(".game");
+const switchGameBehaviorBtn = document.querySelector(
+  ".switch-game-behavior-btn"
+);
 
 // Set Score
 scoreCounter.innerText = score;
+
+// Set game actions
+gameActions = originalGameActions;
+
+function handleSwitchGameBehavior() {
+  if (gameActions.length === 3) {
+    gameActions = [...originalGameActions, ...additionGameActions];
+    switchGameBehaviorBtn.innerText = "Switch to regular";
+    rulesImg.src = rules.advanced;
+    gameInitializer();
+  } else {
+    gameActions = originalGameActions;
+    switchGameBehaviorBtn.innerText = "Switch to advanced";
+    rulesImg.src = rules.regular;
+    gameInitializer();
+  }
+}
+
+switchGameBehaviorBtn.addEventListener("click", handleSwitchGameBehavior);
 
 //stopPropagation fn
 function stopPropagation(e) {
@@ -41,12 +76,20 @@ closeRulesModalBtn.addEventListener("click", closeModal);
 
 modal.addEventListener("click", closeModal);
 
+function gameInitializer() {
+  displayGameActions();
+  displayGameActionsButtons();
+}
+gameInitializer();
+
 // Display Game Actions
-function displayGameActions(actions) {
+function displayGameActions() {
   const gameActionsWrapper = document.querySelector(".game-actions");
   const fragment = document.createDocumentFragment();
 
-  actions.forEach((act) => {
+  gameActionsWrapper.innerHTML = ``;
+
+  gameActions.forEach((act) => {
     const span = document.createElement("span");
     span.textContent = act.name;
     fragment.appendChild(span);
@@ -54,16 +97,22 @@ function displayGameActions(actions) {
 
   gameActionsWrapper.append(fragment);
 }
-displayGameActions(OriginalgameActions);
 
 // Display Game Actions Buttons
-function displayGameActionsButtons(actions) {
-  gameWrapper.innerHTML = `<div class="game-options"></div>`;
+function displayGameActionsButtons() {
+  gameWrapper.innerHTML = `<div class="game-options ${
+    gameActions.length !== 3 && "advanced"
+  }"></div>`;
 
   const gameOptionsWrapper = document.querySelector(".game-options");
+  gameOptionsWrapper.style.backgroundImage =
+    gameActions.length === 3
+      ? "url(./images/bg-triangle.svg)"
+      : "url(./images/bg-pentagon.svg)";
+
   let buttons = ``;
 
-  actions.forEach((act) => {
+  gameActions.forEach((act) => {
     buttons += ` 
       <button data-option="${act.name}" class="option game-option">
         <img src="./images/${act.img}" alt="icon ${act.name}" />
@@ -71,18 +120,16 @@ function displayGameActionsButtons(actions) {
     `;
   });
   gameOptionsWrapper.innerHTML = buttons;
-  addEventListnerToActionButtons();
+  addEventListenerToActionButtons();
 }
-displayGameActionsButtons(OriginalgameActions);
 
 // Handle Game Option Clicked
 function handleGameOptionClicked(ele) {
   const selectedOption = ele.dataset.option;
   ele = ele.cloneNode(true);
-  ele.classList.add("selelcted", "user-choice");
+  ele.classList.add("selected", "user-choice");
 
   // Reset Ui
-
   gameWrapper.innerHTML = `
     <div class="picked-details"></div>
     <div class="selected-step">
@@ -98,10 +145,10 @@ function handleGameOptionClicked(ele) {
   `;
 
   // Display Computer Choice After 3 Secondes
-  setTimeout(() => displayComputerChoice(selectedOption), 2500);
+  setTimeout(() => displayComputerChoice(selectedOption), 1000);
 }
 
-function displayComputerChoice(userChioce) {
+function displayComputerChoice(userChoice) {
   // Remove Place Holder
   document.querySelector(".computer-choice-place-holder").remove();
 
@@ -121,11 +168,11 @@ function displayComputerChoice(userChioce) {
   gameWrapper.querySelector(".selected-step").append(computerChoiceElement);
 
   // Handle Who Is Winner
-  const gameResult = compareChoices(userChioce, computerChoice.name);
+  const gameResult = compareChoices(userChoice, computerChoice.name);
   handleWinner(gameResult);
 }
 
-function addEventListnerToActionButtons() {
+function addEventListenerToActionButtons() {
   document.querySelectorAll(".game-option").forEach((opt) => {
     opt.addEventListener("click", (e) => {
       handleGameOptionClicked(e.target);
@@ -135,8 +182,8 @@ function addEventListnerToActionButtons() {
 
 // Handle Computer Choice
 function getComputerChoice() {
-  const randomIndex = Math.floor(Math.random() * OriginalgameActions.length);
-  return OriginalgameActions[randomIndex];
+  const randomIndex = Math.floor(Math.random() * gameActions.length);
+  return gameActions[randomIndex];
 }
 
 // Handle who Is Winner
@@ -146,33 +193,66 @@ function compareChoices(userChoice, computerChoice) {
     return false;
   }
 
-  if (userChoice === "rock" && computerChoice === "paper") {
-    return "computer";
+  if (userChoice === "rock") {
+    switch (computerChoice) {
+      case "scissors":
+      case "wizard":
+        return "user";
+      default:
+        return "computer";
+    }
   }
 
-  if (userChoice === "paper" && computerChoice === "rock") {
-    return "user";
+  if (userChoice === "paper") {
+    switch (computerChoice) {
+      case "rock":
+      case "spock":
+        return "user";
+      default:
+        return "computer";
+    }
   }
 
-  if (userChoice === "paper" && computerChoice === "scissors") {
-    return "computer";
+  if (userChoice === "scissors") {
+    switch (computerChoice) {
+      case "paper":
+      case "lizard":
+        return "user";
+      default:
+        return "computer";
+    }
   }
 
-  if (userChoice === "scissors" && computerChoice === "paper") {
-    return "user";
+  if (userChoice === "lizard") {
+    switch (computerChoice) {
+      case "spock":
+      case "paper":
+        return "user";
+      default:
+        return "computer";
+    }
   }
 
-  if (userChoice === "rock" && computerChoice === "scissors") {
-    return "user";
-  }
-
-  if (userChoice === "scissors" && computerChoice === "rock") {
-    return "computer";
+  if (userChoice === "spock") {
+    switch (computerChoice) {
+      case "scissors":
+      case "rock":
+        return "user";
+      default:
+        return "computer";
+    }
   }
 }
 
 function incrementScore() {
   score++;
+  localStorage.setItem("game-score", score);
+  scoreCounter.innerText = score;
+}
+
+function decrementScore() {
+  if (score === 0) return;
+  score--;
   localStorage.setItem("game-score", score);
   scoreCounter.innerText = score;
 }
@@ -192,14 +272,13 @@ function handleWinner(winner) {
   if (!winner) {
     resultContentElement.textContent = "no one win!";
   } else if (winner === "user") {
-    // Add Winner Shape To Winner
     document.querySelector(".user-choice").classList.add("winner-shape");
     resultContentElement.textContent = "You Win";
     incrementScore();
   } else {
-    // Add Winner Shape To Winner
     document.querySelector(".computer-choice").classList.add("winner-shape");
     resultContentElement.textContent = "You Lost!";
+    decrementScore();
   }
 
   const playAgainBtn = document.createElement("button");
@@ -215,12 +294,12 @@ function handleWinner(winner) {
   // Show Result Wrapper
   setTimeout(() => {
     resultWrapper.classList.add("show-who-is-winner-wrapper");
-  }, 500);
+  }, 250);
 }
 
 function HandlePlayAgain(resultWrapper) {
   resultWrapper.remove();
 
   // Reset Ui To Choose Action
-  displayGameActionsButtons(OriginalgameActions);
+  displayGameActionsButtons();
 }
