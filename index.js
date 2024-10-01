@@ -251,7 +251,7 @@ function incrementScore() {
 }
 
 function decrementScore() {
-  if (score === 0) return;
+  if (!score) return;
   score--;
   localStorage.setItem("game-score", score);
   scoreCounter.innerText = score;
